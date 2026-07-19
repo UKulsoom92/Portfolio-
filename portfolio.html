@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umme Kulsoom | AI Automation Builder</title>
+<meta name="description" content="AI automation builder specializing in no-code workflow systems: Make.com, Claude API, Airtable, webhooks.">
+<style>
+  :root{
+    --bg: #11161A;
+    --bg-raised: #171D22;
+    --line: #2A333A;
+    --text: #E9EDEF;
+    --text-dim: #9AA7AD;
+    --signal: #E8A33D;
+    --flow: #5FA8A3;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; }
+  ::selection{ background:var(--signal); color:#11161A; }
+
+  .wrap{ max-width:920px; margin:0 auto; padding:0 24px; }
+
+  /* ---- NAV ---- */
+  nav{
+    position:sticky; top:0; z-index:10;
+    background:rgba(17,22,26,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{ display:flex; justify-content:space-between; align-items:center; height:64px; }
+  .brand{ font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:17px; letter-spacing:-0.01em; }
+  .navlinks{ display:flex; gap:28px; font-size:14px; color:var(--text-dim); }
+  .navlinks a{ text-decoration:none; transition:color .15s; }
+  .navlinks a:hover, .navlinks a:focus-visible{ color:var(--text); outline:none; }
+
+  /* ---- HERO ---- */
+  header.hero{ padding:96px 0 72px; border-bottom:1px solid var(--line); }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--flow); margin-bottom:20px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:''; width:7px; height:7px; border-radius:50%; background:var(--flow); display:inline-block; }
+  h1{
+    font-family:'Space Grotesk', sans-serif; font-weight:600;
+    font-size:clamp(32px, 5vw, 50px); line-height:1.12; letter-spacing:-0.02em;
+    max-width:14ch;
+  }
+  h1 em{ font-style:normal; color:var(--signal); }
+  .hero p.sub{ margin-top:22px; max-width:52ch; font-size:17px; color:var(--text-dim); }
+  .hero-actions{ margin-top:32px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--mono); font-size:13px; padding:11px 20px; border-radius:3px;
+    text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--line); transition:border-color .15s, background .15s;
+  }
+  .btn.primary{ background:var(--signal); color:#11161A; border-color:var(--signal); font-weight:500; }
+  .btn.primary:hover{ background:#f2b357; }
+  .btn.ghost:hover{ border-color:var(--text-dim); }
+
+  /* ---- FLOW DIAGRAM ---- */
+  .flow{ margin-top:64px; }
+  .flow svg{ width:100%; height:auto; display:block; }
+  .flow-label{
+    font-family:var(--mono); font-size:11px; fill:var(--text-dim); letter-spacing:.06em; text-transform:uppercase;
+  }
+  .flow-node circle{ fill:var(--bg-raised); stroke:var(--line); stroke-width:1.5; }
+  .flow-node.active circle{ stroke:var(--flow); }
+  .flow-path{ stroke:var(--line); stroke-width:1.5; fill:none; }
+  .flow-pulse{
+    fill:var(--signal);
+    offset-path: path('M20,40 L 220,40 L 220,40 L 420,40 L 420,40 L 620,40 L 620,40 L 800,40');
+    animation: travel 6s linear infinite;
+  }
+  @keyframes travel{
+    0%{ offset-distance:0%; opacity:0; }
+    5%{ opacity:1; }
+    95%{ opacity:1; }
+    100%{ offset-distance:100%; opacity:0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .flow-pulse{ animation:none; opacity:0; }
+  }
+
+  /* ---- SECTIONS ---- */
+  section{ padding:72px 0; border-bottom:1px solid var(--line); }
+  .section-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:36px; }
+  .section-num{ font-family:var(--mono); font-size:13px; color:var(--text-dim); }
+  h2{ font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:600; letter-spacing:-0.01em; }
+
+  .about-grid{ display:grid; grid-template-columns:1fr 1fr; gap:48px; }
+  @media (max-width:700px){ .about-grid{ grid-template-columns:1fr; } }
+  .about-grid p{ color:var(--text-dim); font-size:15px; }
+  .about-grid p + p{ margin-top:16px; }
+  .about-grid strong{ color:var(--text); font-weight:500; }
+
+  /* ---- PROJECT MODULES ---- */
+  .module{
+    background:var(--bg-raised); border:1px solid var(--line); border-radius:6px;
+    padding:28px; margin-bottom:20px; position:relative;
+  }
+  .module::before{
+    content:''; position:absolute; left:-1px; top:20px; bottom:20px; width:3px;
+    background:var(--flow); border-radius:2px;
+  }
+  .module-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+  .module h3{ font-family:'Space Grotesk', sans-serif; font-size:18px; font-weight:600; margin-bottom:6px; }
+  .module .problem{ font-size:14px; color:var(--text-dim); max-width:60ch; }
+  .stack{ display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+  .chip{
+    font-family:var(--mono); font-size:11px; color:var(--flow);
+    border:1px solid rgba(95,168,163,0.35); padding:4px 9px; border-radius:20px;
+  }
+  .module ul{ margin-top:16px; padding-left:18px; font-size:14.5px; color:var(--text); }
+  .module ul li{ margin-bottom:8px; }
+  .module ul li::marker{ color:var(--signal); }
+  .demo-link{
+    font-family:var(--mono); font-size:12.5px; margin-top:18px; display:inline-flex; align-items:center; gap:6px;
+    color:var(--text-dim); text-decoration:none; border-bottom:1px dashed var(--line); padding-bottom:2px;
+  }
+  .demo-link:hover{ color:var(--signal); border-color:var(--signal); }
+
+  .portfolio-note{
+    font-size:13.5px; color:var(--text-dim); margin-bottom:28px; padding:14px 16px;
+    border:1px solid var(--line); border-radius:4px; background:var(--bg-raised);
+  }
+
+  /* ---- SKILLS ---- */
+  .skill-panel{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(210px,1fr)); gap:0;
+    border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  }
+  .skill-col{ padding:22px 20px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .skill-col:last-child{ border-right:none; }
+  .skill-col h4{
+    font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--flow); margin-bottom:12px;
+  }
+  .skill-col div{ font-size:14px; color:var(--text-dim); margin-bottom:6px; }
+
+  /* ---- EXPERIENCE ---- */
+  .exp-row{ display:flex; gap:24px; padding:18px 0; border-bottom:1px solid var(--line); }
+  .exp-row:last-child{ border-bottom:none; }
+  .exp-role{ font-weight:500; }
+  .exp-meta{ font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:4px; }
+  .exp-desc{ font-size:14.5px; color:var(--text-dim); margin-top:8px; max-width:60ch; }
+
+  /* ---- CONTACT ---- */
+  footer{ padding:80px 0 60px; }
+  footer h2{ margin-bottom:16px; }
+  footer p{ color:var(--text-dim); max-width:48ch; margin-bottom:32px; }
+  .contact-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .foot-meta{ margin-top:56px; font-family:var(--mono); font-size:12px; color:var(--text-dim); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">Umme Kulsoom</div>
+    <div class="navlinks">
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">AI Automation Builder</div>
+    <h1>I build the systems that <em>used to need a person</em>.</h1>
+    <p class="sub">No-code AI workflow automation using Make.com, HubSpot, n8n, and Claude. Five years running manual sales operations before this, now designing, building, and debugging the automated version of that same work.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#projects">See the projects →</a>
+      <a class="btn ghost" href="mailto:kulsoomu992@gmail.com">Email me</a>
+    </div>
+
+    <div class="flow">
+      <svg viewBox="0 0 820 80" preserveAspectRatio="xMidYMid meet">
+        <path class="flow-path" d="M20,40 L220,40 L420,40 L620,40 L800,40"></path>
+        <circle class="flow-pulse" r="4"></circle>
+
+        <g class="flow-node active"><circle cx="20" cy="40" r="6"></circle></g>
+        <text class="flow-label" x="20" y="66" text-anchor="middle">Trigger</text>
+
+        <g class="flow-node"><circle cx="220" cy="40" r="6"></circle></g>
+        <text class="flow-label" x="220" y="66" text-anchor="middle">Classify (AI)</text>
+
+        <g class="flow-node"><circle cx="420" cy="40" r="6"></circle></g>
+        <text class="flow-label" x="420" y="66" text-anchor="middle">Route</text>
+
+        <g class="flow-node"><circle cx="620" cy="40" r="6"></circle></g>
+        <text class="flow-label" x="620" y="66" text-anchor="middle">Respond</text>
+
+        <g class="flow-node"><circle cx="800" cy="40" r="6"></circle></g>
+        <text class="flow-label" x="795" y="66" text-anchor="end">Log</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">01</span><h2>Background</h2></div>
+    <div class="about-grid">
+      <p>Before automation, I spent five years in sales leadership at Forever Living Products, reaching Manager rank in four months, building and leading a team of 50+, and running lead generation, follow-up, and client communication entirely by hand. <strong>I know exactly which parts of that process a human shouldn't have to do manually.</strong></p>
+      <p>I now design and build the automated version of that work using no-code tools: Make.com, the Claude API, Airtable, and webhooks. Every project below is <strong>self-directed</strong>: I designed it, built it, broke it, fixed it, and documented it end to end. None are client deployments yet; the value here is the demonstrated ability to architect and debug a working system, not a client roster.</p>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">02</span><h2>Projects</h2></div>
+    <div class="portfolio-note">Independently built, tested, and debugged. Not yet deployed for paying clients; video walkthroughs below show each system running end to end.</div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>AI Lead Follow-Up Agent</h3>
+          <p class="problem">Manual response delays reduced new-lead engagement.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Chained two-scenario workflow: intake logs to Google Sheets, a Claude API call drafts a personalized reply sent via Brevo, and a webhook-triggered second scenario fires an automated Day 2 follow-up.</li>
+        <li>Designed to eliminate manual first-response delay and standardize lead engagement timing.</li>
+      </ul>
+      <div class="stack"><span class="chip">Make.com</span><span class="chip">Claude API</span><span class="chip">Tally</span><span class="chip">Google Sheets</span><span class="chip">Brevo</span><span class="chip">Webhooks</span></div>
+      <a class="demo-link" href="https://youtu.be/e3SIoad8s7I?si=AhF1hxb0AVLIZpFw" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>Email Triage Agent</h3>
+          <p class="problem">Manual inbox monitoring for intent and urgency doesn't scale.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Reads incoming Gmail, classifies each message by intent and urgency using the Claude API, logs results to Google Sheets, and auto-replies where the classification allows.</li>
+        <li>Designed to remove manual inbox triage and standardize response handling.</li>
+      </ul>
+      <div class="stack"><span class="chip">Make.com</span><span class="chip">Claude API</span><span class="chip">Gmail</span><span class="chip">Google Sheets</span></div>
+      <a class="demo-link" href="https://youtu.be/vfL2RwxrvNM?si=OapuUlGaAiNFBfvk" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>AI Lead Qualification Agent</h3>
+          <p class="problem">Manual lead qualification was inconsistent at volume.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Scoring workflow that sends lead data to the Claude API, parses the response, and routes each lead through one of three branches (hot / warm / cold) to a segment-specific Brevo email.</li>
+        <li>Designed to standardize lead prioritization and remove subjective manual scoring.</li>
+      </ul>
+      <div class="stack"><span class="chip">Make.com</span><span class="chip">Claude API</span><span class="chip">Google Sheets</span><span class="chip">Router</span><span class="chip">Brevo</span></div>
+      <a class="demo-link" href="https://youtu.be/P1quEyOZh7U?si=d2OsQVqksZnXREDD" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>Inquiry Triage & Lead Intake Agent</h3>
+          <p class="problem">Manual transfer of inquiry data into operational systems caused delays and entry errors.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Connects form intake to an Airtable record and a personalized confirmation email; rebuilt on an alternate stack after a third-party platform restriction broke the original build.</li>
+        <li>Independently diagnosed and resolved a duplicate webhook trigger and an array-field mapping error through isolated module testing.</li>
+      </ul>
+      <div class="stack"><span class="chip">Make.com</span><span class="chip">Airtable</span><span class="chip">Tally Forms</span><span class="chip">Gmail</span></div>
+      <a class="demo-link" href="https://youtu.be/rpQs7SoXlo4?si=TeRJTX67SwyQrTrk" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>Automated Lead Generation Agent</h3>
+          <p class="problem">Manually researching and compiling prospect lists is slow and repetitive.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Workflow that queries business search data via HTTP requests, iterates over results, parses relevant text fields, and logs structured records to Google Sheets.</li>
+        <li>Designed to automate prospect sourcing and remove manual data entry from lead-list building.</li>
+      </ul>
+      <div class="stack"><span class="chip">Make.com</span><span class="chip">Google Sheets</span><span class="chip">HTTP</span><span class="chip">Iterator</span><span class="chip">Text Parser</span></div>
+      <a class="demo-link" href="https://youtu.be/LRhOvSnLm8c?si=Ns2ZGaegGGXsgq3I" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>Ticket Priority Routing & SLA Automation</h3>
+          <p class="problem">Support tickets of varying urgency get treated the same way without a system, so high-priority issues sit unaddressed alongside low-priority ones.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Ticket-based workflow that branches by priority, auto-assigns the ticket owner per branch, applies a priority-scaled delay, and creates an SLA follow-up task associated to the ticket.</li>
+        <li>Verified end to end with a real high-priority test ticket: owner assignment fired immediately, SLA task created and correctly associated after the delay period.</li>
+      </ul>
+      <div class="stack"><span class="chip">HubSpot</span><span class="chip">Workflows</span><span class="chip">Branching Logic</span><span class="chip">Delay Steps</span></div>
+      <a class="demo-link" href="https://youtu.be/eBvZRXPVxkQ?si=VGZ_LSEyptE9QKHN" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>Lead Scoring & MQL Routing</h3>
+          <p class="problem">Sales teams need a consistent way to decide which new contacts are worth immediate follow-up, rather than judging each one manually.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Workflow that updates lifecycle stage, rotates the contact to an owner, and sends a notification once a custom Lead Score property crosses a set threshold.</li>
+        <li>Verified working: a test contact's score was set to 60 and all three actions fired correctly. Note: the score-accumulation engine itself was not built, since that logic normally lives in a paid HubSpot tier; what's built and verified is the routing logic once a threshold is crossed.</li>
+      </ul>
+      <div class="stack"><span class="chip">HubSpot</span><span class="chip">Workflows</span><span class="chip">Custom Properties</span><span class="chip">Lifecycle Automation</span></div>
+      <a class="demo-link" href="https://youtu.be/cxqlbDq2_mQ?si=XWVIXu8UxqNGUE9O" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>Deal Stage to Task Automation</h3>
+          <p class="problem">Sales reps need to be reminded to follow up when a deal's stage changes, rather than relying on memory or manual tracking.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Deal-based workflow that triggers on any Deal Stage change and creates a follow-up task assigned to the deal owner.</li>
+        <li>Verified end to end with a real test deal: moving the stage from "Appointment Scheduled" to "Qualified to Buy" produced a correctly assigned follow-up task automatically.</li>
+      </ul>
+      <div class="stack"><span class="chip">HubSpot</span><span class="chip">Workflows</span><span class="chip">Property-Change Trigger</span></div>
+      <a class="demo-link" href="https://youtu.be/00eTmyYpPNc?si=BU5fU-TFMWuoISIq" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+
+    <div class="module">
+      <div class="module-top">
+        <div>
+          <h3>AI Support Agent with RAG</h3>
+          <p class="problem">Repetitive support questions still need a human every time, and most automated answers risk confidently guessing instead of admitting they don't know.</p>
+        </div>
+      </div>
+      <ul>
+        <li>Retrieval-augmented support agent built with n8n's native AI Agent node, Claude as the reasoning model, and a self-populated vector store (OpenAI embeddings) for FAQ retrieval, built manually node by node rather than from a template.</li>
+        <li>Verified across three test cases, including a correct, honest "I don't know" response for a question outside the FAQ's scope rather than a hallucinated answer.</li>
+      </ul>
+      <div class="stack"><span class="chip">n8n</span><span class="chip">Claude API</span><span class="chip">OpenAI Embeddings</span><span class="chip">Vector Store</span></div>
+      <a class="demo-link" href="https://youtu.be/on9rI6K1sqE?si=uvBh-rqyWrlhej6O" target="_blank" rel="noopener">▶ Watch demo</a>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">03</span><h2>Stack</h2></div>
+    <div class="skill-panel">
+      <div class="skill-col">
+        <h4>AI & LLMs</h4>
+        <div>Claude API</div>
+        <div>Prompt engineering</div>
+        <div>AI-assisted classification</div>
+        <div>Retrieval-augmented generation</div>
+      </div>
+      <div class="skill-col">
+        <h4>Automation</h4>
+        <div>Make.com (Integromat)</div>
+        <div>HubSpot</div>
+        <div>n8n</div>
+        <div>Zapier</div>
+        <div>ManyChat</div>
+      </div>
+      <div class="skill-col">
+        <h4>Integrations</h4>
+        <div>REST APIs / Webhooks</div>
+        <div>Airtable</div>
+        <div>Gmail / Google Sheets</div>
+        <div>Brevo</div>
+      </div>
+      <div class="skill-col">
+        <h4>Practice</h4>
+        <div>Isolated module testing</div>
+        <div>Data-mapping debugging</div>
+        <div>Technical documentation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">04</span><h2>Experience</h2></div>
+    <div class="exp-row">
+      <div style="flex:1">
+        <div class="exp-role">Manager, Forever Living Products</div>
+        <div class="exp-meta">Pakistan · March 2020 to March 2025</div>
+        <div class="exp-desc">Reached Manager rank in 4 months on a 150-case-credit sales and recruitment target; built and led a team of 50+. Trained distributors across Pakistan; invited to the company's international Eagle Manager Retreat (Italy, 2024).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="section-head"><span class="section-num">05</span><h2>Get in touch</h2></div>
+    <p>Open to roles in AI workflow automation, automation consulting, and no-code implementation.</p>
+    <div class="contact-row">
+      <a class="btn primary" href="mailto:kulsoomu992@gmail.com">kulsoomu992@gmail.com</a>
+      <a class="btn ghost" href="https://linkedin.com/in/umme-kulsoom-7243993bb" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="foot-meta">Islamabad, Pakistan</div>
+  </div>
+</footer>
+
+</body>
+</html>
